@@ -24,6 +24,8 @@
 #ifndef SLIMEVR_SERIALCOMMANDS_H_
 #define SLIMEVR_SERIALCOMMANDS_H_
 
+#include <stdio.h>
+
 namespace SerialCommands {
     void setUp();
     void update();
