@@ -21,6 +21,7 @@
     THE SOFTWARE.
 */
 #include "sensor.h"
+#include "logging/Logger.h"
 
 #include <MPU9250_6Axis_MotionApps_V6_12.h>
 
@@ -54,4 +55,6 @@ private:
     // Loop timing globals
     unsigned long now = 0, last = 0; //micros() timers
     float deltat = 0;                //loop time in seconds
+
+    SlimeVR::Logging::Logger m_Logger = SlimeVR::Logging::Logger("MPU9250Sensor");
 };

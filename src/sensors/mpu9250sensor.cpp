@@ -43,13 +43,11 @@ void MPU9250Sensor::motionSetup() {
     // initialize device
     imu.initialize(addr);
     if(!imu.testConnection()) {
-        Serial.print("[ERR] MPU9250: Can't communicate with MPU, response 0x");
-        Serial.println(imu.getDeviceID(), HEX);
+        m_Logger.error("[ERR] MPU9250: Can't communicate with MPU, response 0x%x", imu.getDeviceID());
         return;
     }
 
-    Serial.print("[OK] MPU9250: Connected to MPU, ID 0x");
-        Serial.println(imu.getDeviceID(), HEX);
+    m_Logger.info("Connected to MPU9250, ID 0x%x", imu.getDeviceID());
 
     int16_t ax,ay,az;
 
@@ -58,7 +56,7 @@ void MPU9250Sensor::motionSetup() {
     imu.getAcceleration(&ax, &ay, &az);
     if(az<0 && 10.0*(ax*ax+ay*ay)<az*az) {
         digitalWrite(CALIBRATING_LED, HIGH);
-        Serial.println("Calling Calibration... Flip front to confirm start calibration.");
+        m_Logger.debug("Calling Calibration... Flip front to confirm start calibration.");
         delay(5000);
         digitalWrite(CALIBRATING_LED, LOW);
         imu.getAcceleration(&ax, &ay, &az);
@@ -76,14 +74,14 @@ void MPU9250Sensor::motionSetup() {
         }
 
         // turn on the DMP, now that it's ready
-        Serial.println(F("[NOTICE] Enabling DMP..."));
+        m_Logger.debug("Enabling DMP...");
         imu.setDMPEnabled(true);
 
         // TODO: Add interrupt support
         // mpuIntStatus = imu.getIntStatus();
 
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        Serial.println(F("[NOTICE] DMP ready! Waiting for first interrupt..."));
+        m_Logger.info("DMP ready! Waiting for first interrupt...");
         dmpReady = true;
 
         // get expected DMP packet size for later comparison
@@ -94,9 +92,7 @@ void MPU9250Sensor::motionSetup() {
         // 1 = initial memory load failed
         // 2 = DMP configuration updates failed
         // (if it's going to break, usually the code will be 1)
-        Serial.print(F("[ERR] DMP Initialization failed (code "));
-        Serial.print(devStatus);
-        Serial.println(F(")"));
+        m_Logger.error("DMP Initialization failed (code %d)", devStatus);
     }
 #else
     working = true;
@@ -199,7 +195,7 @@ void MPU9250Sensor::getMPUScaled()
 
 void MPU9250Sensor::startCalibration(int calibrationType) {
     LEDManager::on(CALIBRATING_LED);
-    Serial.println("[NOTICE] Gathering raw data for device calibration...");
+    m_Logger.debug("Gathering raw data for device calibration...");
     constexpr int calibrationSamples = 300;
     DeviceConfig *config = getConfigPtr();
     // Reset values
@@ -208,7 +204,7 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
     Gxyz[2] = 0;
 
     // Wait for sensor to calm down before calibration
-    Serial.println("[NOTICE] Put down the device and wait for baseline gyro reading calibration");
+    m_Logger.info("Put down the device and wait for baseline gyro reading calibration");
     delay(2000);
     for (int i = 0; i < calibrationSamples; i++)
     {
@@ -221,14 +217,14 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
     Gxyz[0] /= calibrationSamples;
     Gxyz[1] /= calibrationSamples;
     Gxyz[2] /= calibrationSamples;
-    Serial.printf("[NOTICE] Gyro calibration results: %f %f %f\n", Gxyz[0], Gxyz[1], Gxyz[2]);
+    m_Logger.debug("Gyro calibration results: %f %f %f", Gxyz[0], Gxyz[1], Gxyz[2]);
     Network::sendRawCalibrationData(Gxyz, CALIBRATION_TYPE_EXTERNAL_GYRO, 0);
     config->calibration[sensorId].G_off[0] = Gxyz[0];
     config->calibration[sensorId].G_off[1] = Gxyz[1];
     config->calibration[sensorId].G_off[2] = Gxyz[2];
 
     // Blink calibrating led before user should rotate the sensor
-    Serial.println("[NOTICE] Gently rotate the device while it's gathering accelerometer and magnetometer data");
+    m_Logger.info("Gently rotate the device while it's gathering accelerometer and magnetometer data");
     LEDManager::pattern(CALIBRATING_LED, 15, 300, 3000/310);
     float *calibrationDataAcc = (float*)malloc(calibrationSamples * 3 * sizeof(float));
     float *calibrationDataMag = (float*)malloc(calibrationSamples * 3 * sizeof(float));
@@ -248,7 +244,7 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
         LEDManager::off(CALIBRATING_LED);
         delay(250);
     }
-    Serial.println("[NOTICE] Now Calculate Calibration data");
+    m_Logger.debug("Calculating calibration data...");
 
     float A_BAinv[4][3];
     float M_BAinv[4][3];
@@ -256,8 +252,8 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
     CalculateCalibration(calibrationDataMag, calibrationSamples, M_BAinv);
     free(calibrationDataAcc);
     free(calibrationDataMag);
-    Serial.println("[NOTICE] Finished Calculate Calibration data");
-    Serial.println("[NOTICE] Now Saving EEPROM");
+    m_Logger.debug("Finished calculating calibration data");
+    m_Logger.debug("Now saving to EEPROM");
     for (int i = 0; i < 3; i++)
     {
         config->calibration[sensorId].A_B[i] = A_BAinv[0][i];
@@ -273,6 +269,6 @@ void MPU9250Sensor::startCalibration(int calibrationType) {
     setConfig(*config);
     LEDManager::off(CALIBRATING_LED);
     Network::sendCalibrationFinished(CALIBRATION_TYPE_EXTERNAL_ALL, 0);
-    Serial.println("[NOTICE] Finished Saving EEPROM");
-    Serial.println("[NOTICE] Calibration data gathered and sent");
+    m_Logger.debug("Finished Saving EEPROM");
+    m_Logger.info("Calibration data gathered");
 }
