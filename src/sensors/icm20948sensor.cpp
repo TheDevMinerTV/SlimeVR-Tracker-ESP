@@ -175,7 +175,7 @@ void ICM20948Sensor::motionSetup() {
         m_Logger.fatal("I2C Address not supportet by ICM20948 library: %02x", addr);
         return;
     }
-    m_Logger.debug("Start Init with addr = %s", tracker ? "true" : "false");
+    //m_Logger.debug("Start Init with addr = %s", tracker ? "true" : "false");
     ICM_20948_Status_e imu_err = imu.begin(Wire, tracker);
     if (imu_err != ICM_20948_Stat_Ok) {
         m_Logger.fatal("Can't connect to 0x%02x  Error Code: 0x%02x", this->addr, imu_err);
