@@ -28,7 +28,7 @@
 class MPU9250Sensor : public Sensor
 {
 public:
-    MPU9250Sensor(){};
+    MPU9250Sensor() : Sensor("MPU9250Sensor"){};
     ~MPU9250Sensor(){};
     void motionSetup() override final;
     void motionLoop() override final;
@@ -55,6 +55,4 @@ private:
     // Loop timing globals
     unsigned long now = 0, last = 0; //micros() timers
     float deltat = 0;                //loop time in seconds
-
-    SlimeVR::Logging::Logger m_Logger = SlimeVR::Logging::Logger("MPU9250Sensor");
 };
