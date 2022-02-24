@@ -42,15 +42,7 @@ void Sensor::sendData() {
         newData = false;
         Network::sendRotationData(&quaternion, DATA_TYPE_NORMAL, calibrationAccuracy, sensorId);
         #ifdef FULL_DEBUG
-            Serial.print("[DBG] Quaternion: ");
-            Serial.print(quaternion.x);
-            Serial.print(",");
-            Serial.print(quaternion.y);
-            Serial.print(",");
-            Serial.print(quaternion.z);
-            Serial.print(",");
-            Serial.print(quaternion.w);
-            Serial.print("\n");
+            m_Logger.debug("Quaternion: %f, %f, %f, %f", UNPACK_QUATERNION(quaternion));
         #endif
     }
 }
