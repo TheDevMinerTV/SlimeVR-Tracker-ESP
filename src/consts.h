@@ -63,6 +63,14 @@
 #define LED_BUILTIN 2
 #endif
 
+#if defined(LED_INVERTED) && LED_INVERTED
+#define LED_ON LOW
+#define LED_OFF HIGH
+#else
+#define LED_ON HIGH
+#define LED_OFF LOW
+#endif
+
 #ifdef ESP8266
   #define HARDWARE_MCU 1
 #elif defined(ESP32)
