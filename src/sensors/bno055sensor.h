@@ -34,7 +34,7 @@ public:
     BNO055Sensor(uint8_t id, uint8_t address, float rotation) : Sensor("BNO055Sensor", IMU_BNO055, id, address, rotation){};
     ~BNO055Sensor(){};
     void motionSetup() override final;
-    void motionLoop() override final;
+    void readData() override final;
     void startCalibration(int calibrationType) override final;
 
 private:

@@ -33,7 +33,7 @@ public:
     ICM20948Sensor(uint8_t id, uint8_t address, float rotation) : Sensor("ICM20948Sensor", IMU_ICM20948, id, address, rotation) {}
     ~ICM20948Sensor() override = default;
     void motionSetup() override final;
-    void motionLoop() override final;
+    void readData() override final;
     void sendData() override final;
     void startCalibration(int calibrationType) override final;
     void save_bias(bool repeat);

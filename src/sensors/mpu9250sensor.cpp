@@ -121,8 +121,8 @@ void MPU9250Sensor::motionSetup() {
 #endif
 }
 
-
-void MPU9250Sensor::motionLoop() {
+void MPU9250Sensor::readData()
+{
 #if ENABLE_INSPECTION
     {
         int16_t rX, rY, rZ, aX, aY, aZ, mX, mY, mZ;
@@ -134,34 +134,71 @@ void MPU9250Sensor::motionLoop() {
     }
 #endif
 
-#if not (defined(_MAHONY_H_) || defined(_MADGWICK_H_))
+#if not(defined(_MAHONY_H_) || defined(_MADGWICK_H_))
     // Update quaternion
-    if(!dmpReady)
+    if (!dmpReady)
+    {
         return;
+    }
+
     Quaternion rawQuat{};
-    if(!imu.GetCurrentFIFOPacket(fifoBuffer,imu.dmpGetFIFOPacketSize())) return;
-    if(imu.dmpGetQuaternion(&rawQuat, fifoBuffer)) return; // FIFO CORRUPTED
-    Quat quat(-rawQuat.y,rawQuat.x,rawQuat.z,rawQuat.w);
-    if(!skipCalcMag){
+
+    if (!imu.GetCurrentFIFOPacket(fifoBuffer, imu.dmpGetFIFOPacketSize()))
+    {
+        return;
+    }
+
+    if (imu.dmpGetQuaternion(&rawQuat, fifoBuffer))
+    {
+        return; // FIFO CORRUPTED
+    }
+
+    Quat quat(-rawQuat.y, rawQuat.x, rawQuat.z, rawQuat.w);
+
+    if (!skipCalcMag)
+    {
         getMPUScaled();
-        if(Mxyz[0]==0.0f && Mxyz[1]==0.0f && Mxyz[2]==0.0f) return;
+
+        if (Mxyz[0] == 0.0f && Mxyz[1] == 0.0f && Mxyz[2] == 0.0f)
+        {
+            return;
+        }
+
         VectorFloat grav;
-        imu.dmpGetGravity(&grav,&rawQuat);
-        float Grav[3]={grav.x,grav.y,grav.z};
-        skipCalcMag=SKIP_CALC_MAG_INTERVAL;
-        if(correction.length_squared()==0.0f) {
-            correction=getCorrection(Grav,Mxyz,quat);
-            if(sensorId) skipCalcMag=SKIP_CALC_MAG_INTERVAL/2;
+        imu.dmpGetGravity(&grav, &rawQuat);
+        float Grav[3] = {grav.x, grav.y, grav.z};
+        skipCalcMag = SKIP_CALC_MAG_INTERVAL;
+
+        if (correction.length_squared() == 0.0f)
+        {
+            correction = getCorrection(Grav, Mxyz, quat);
+
+            if (sensorId)
+            {
+                skipCalcMag = SKIP_CALC_MAG_INTERVAL / 2;
+            }
         }
-        else {
-            Quat newCorr = getCorrection(Grav,Mxyz,quat);
-            if(!__isnanf(newCorr.w)) correction = correction.slerp(newCorr,MAG_CORR_RATIO);
+        else
+        {
+            Quat newCorr = getCorrection(Grav, Mxyz, quat);
+
+            if (!__isnanf(newCorr.w))
+            {
+                correction = correction.slerp(newCorr, MAG_CORR_RATIO);
+            }
         }
-    }else skipCalcMag--;
-    quaternion=correction*quat;
+    }
+    else
+    {
+        skipCalcMag--;
+    }
+
+    quaternion = correction * quat;
+
 #else
+
     unsigned long now = micros();
-    unsigned long deltat = now - last; //seconds since last update
+    unsigned long deltat = now - last; // seconds since last update
     last = now;
     getMPUScaled();
     mahonyQuaternionUpdate(q, Axyz[0], Axyz[1], Axyz[2], Gxyz[0], Gxyz[1], Gxyz[2], Mxyz[0], Mxyz[1], Mxyz[2], deltat * 1.0e-6);
@@ -169,6 +206,7 @@ void MPU9250Sensor::motionLoop() {
     quaternion.set(-q[2], q[1], q[3], q[0]);
 
 #endif
+
     quaternion *= sensorOffset;
 
 #if ENABLE_INSPECTION
@@ -177,7 +215,8 @@ void MPU9250Sensor::motionLoop() {
     }
 #endif
 
-    if(!lastQuatSent.equalsWithEpsilon(quaternion)) {
+    if (!lastQuatSent.equalsWithEpsilon(quaternion))
+    {
         newData = true;
         lastQuatSent = quaternion;
     }

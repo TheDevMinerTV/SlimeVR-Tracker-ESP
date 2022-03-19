@@ -87,7 +87,7 @@ void BNO080Sensor::motionSetup()
     configured = true;
 }
 
-void BNO080Sensor::motionLoop()
+void BNO080Sensor::readData()
 {
     //Look for reports from the IMU
     while (imu.dataAvailable())
@@ -115,6 +115,7 @@ void BNO080Sensor::motionLoop()
 
         lastReset = 0;
         lastData = millis();
+
         if (useMagnetometerAllTheTime || !useMagnetometerCorrection)
         {
             if (imu.hasNewQuat())
@@ -150,6 +151,7 @@ void BNO080Sensor::motionLoop()
 
                 newData = true;
             }
+
             if (imu.hasNewMagQuat())
             {
                 imu.getMagQuat(magQuaternion.x, magQuaternion.y, magQuaternion.z, magQuaternion.w, magneticAccuracyEstimate, magCalibrationAccuracy);
@@ -164,40 +166,53 @@ void BNO080Sensor::motionLoop()
                 newMagData = true;
             }
         }
+
         if (imu.getTapDetected())
         {
             tap = imu.getTapDetector();
         }
+
         if (imu.hasNewAccel())
         {
             float v[3];
             uint8_t acc;
             imu.getAccel(v[0], v[1], v[2], acc);
-            Network::sendAccel(v, PACKET_ACCEL);
+            Network::sendAccel(v);
         }
+
         if (m_IntPin == 255 || imu.I2CTimedOut())
+        {
             break;
+        }
     }
+
     if (lastData + 1000 < millis() && configured)
     {
-        while(true) {
+        while(true)
+        {
             BNO080Error error = imu.readError();
-            if(error.error_source == 255)
+
+            if(error.error_source == 255) {
                 break;
+            }
+
             lastError = error;
             m_Logger.error("BNO08X error. Severity: %d, seq: %d, src: %d, err: %d, mod: %d, code: %d",
                 error.severity, error.error_sequence_number, error.error_source, error.error, error.error_module, error.error_code);
         }
+
         statusManager.setStatus(SlimeVR::Status::IMU_ERROR, true);
         working = false;
         lastData = millis();
         uint8_t rr = imu.resetReason();
+
         if (rr != lastReset)
         {
             lastReset = rr;
             Network::sendError(rr, this->sensorId);
         }
-        m_Logger.error("Sensor %d doesn't respond. Last reset reason:", sensorId, lastReset);
+
+        m_Logger.error("IMU didn't respond. Last reset reason:", lastReset);
         m_Logger.error("Last error: %d, seq: %d, src: %d, err: %d, mod: %d, code: %d",
                 lastError.severity, lastError.error_sequence_number, lastError.error_source, lastError.error, lastError.error_module, lastError.error_code);
     }
@@ -235,7 +250,7 @@ void BNO080Sensor::sendData()
 
 void BNO080Sensor::startCalibration(int calibrationType)
 {
-    // TODO It only calibrates gyro, it should have multiple calibration modes, and check calibration status in motionLoop()
+    // TODO It only calibrates gyro, it should have multiple calibration modes, and check calibration status in readData()
     ledManager.pattern(20, 20, 10);
     ledManager.blink(2000);
     imu.calibrateGyro();

@@ -165,7 +165,7 @@ void Network::sendHeartbeat() {
 }
 
 // PACKET_ACCEL 4
-void Network::sendAccel(float* vector, uint8_t sensorId) {
+void Network::sendAccel(float* vector) {
     if(!connected)
     {
         return;
@@ -394,7 +394,6 @@ void Network::sendHandshake() {
     }
 }
 
-#if ENABLE_INSPECTION
 void Network::sendInspectionRawIMUData(uint8_t sensorId, int16_t rX, int16_t rY, int16_t rZ, uint8_t rA, int16_t aX, int16_t aY, int16_t aZ, uint8_t aA, int16_t mX, int16_t mY, int16_t mZ, uint8_t mA)
 {
     if (!connected)
@@ -542,7 +541,6 @@ void Network::sendInspectionCorrectionData(uint8_t sensorId, Quat quaternion)
         udpClientLogger.error("CorrectionData write end error: %d", Udp.getWriteError());
     }
 }
-#endif
 
 void returnLastPacket(int len) {
     if(DataTransfer::beginPacket()) {

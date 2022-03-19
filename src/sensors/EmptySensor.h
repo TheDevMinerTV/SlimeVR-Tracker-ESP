@@ -38,7 +38,7 @@ namespace SlimeVR
             ~EmptySensor(){};
 
             void motionSetup() override final{};
-            void motionLoop() override final{};
+            void readData() override final{};
             void sendData() override final{};
             void startCalibration(int calibrationType) override final{};
         };

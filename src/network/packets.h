@@ -69,7 +69,7 @@ namespace Network {
     void sendHandshake();
 
     // PACKET_ACCEL 4
-    void sendAccel(float* vector, uint8_t sensorId);
+    void sendAccel(float* vector);
 
     // PACKET_RAW_CALIBRATION_DATA 6
     void sendRawCalibrationData(float* vector, uint8_t calibrationType, uint8_t sensorId);
@@ -102,14 +102,12 @@ namespace Network {
     // PACKET_TEMPERATURE 20
     void sendTemperature(float temperature, uint8_t sensorId);
 
-#if ENABLE_INSPECTION
     void sendInspectionRawIMUData(uint8_t sensorId, int16_t rX, int16_t rY, int16_t rZ, uint8_t rA, int16_t aX, int16_t aY, int16_t aZ, uint8_t aA, int16_t mX, int16_t mY, int16_t mZ, uint8_t mA);
     void sendInspectionRawIMUData(uint8_t sensorId, float rX, float rY, float rZ, uint8_t rA, float aX, float aY, float aZ, uint8_t aA, float mX, float mY, float mZ, uint8_t mA);
 
     void sendInspectionFusedIMUData(uint8_t sensorId, Quat quaternion);
 
     void sendInspectionCorrectionData(uint8_t sensorId, Quat quaternion);
-#endif
 }
 
 namespace DataTransfer {

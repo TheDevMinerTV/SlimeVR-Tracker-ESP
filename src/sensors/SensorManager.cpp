@@ -123,8 +123,8 @@ namespace SlimeVR
         void SensorManager::update()
         {
             // Gather IMU data
-            m_Sensor1->motionLoop();
-            m_Sensor2->motionLoop();
+            m_Sensor1->readData();
+            m_Sensor2->readData();
 
             if (!ServerConnection::isConnected())
             {

@@ -35,7 +35,7 @@ class BMI160Sensor : public Sensor {
         BMI160Sensor(uint8_t id, uint8_t address, float rotation) : Sensor("BMI160Sensor", IMU_BMI160, id, address, rotation){};
         ~BMI160Sensor(){};
         void motionSetup() override final;
-        void motionLoop() override final;
+        void readData() override final;
         void startCalibration(int calibrationType) override final;
         void getScaledValues(float Gxyz[3], float Axyz[3]);
         float getTemperature();

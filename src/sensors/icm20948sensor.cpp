@@ -327,7 +327,8 @@ void ICM20948Sensor::motionSetup() {
     #endif
 }
 
-void ICM20948Sensor::motionLoop() {
+void ICM20948Sensor::readData()
+{
 #if ENABLE_INSPECTION
     {
         (void)imu.getAGMT();
@@ -350,12 +351,15 @@ void ICM20948Sensor::motionLoop() {
 
     timer.tick();
 
-    bool dataavaliable = true;
-    while (dataavaliable) {
+    bool dataAvailable = true;
+
+    do
+    {
         ICM_20948_Status_e readStatus = imu.readDMPdataFromFIFO(&dmpData);
-        if(readStatus == ICM_20948_Stat_FIFOMoreDataAvail || readStatus == ICM_20948_Stat_Ok)
+
+        if (readStatus == ICM_20948_Stat_FIFOMoreDataAvail || readStatus == ICM_20948_Stat_Ok)
         {
-            if(USE_6_AXIS)
+#if USE_6_AXIS
             {
                 if ((dmpData.header & DMP_header_bitmap_Quat6) > 0)
                 {
@@ -363,72 +367,65 @@ void ICM20948Sensor::motionLoop() {
                     // In case of drift, the sum will not add to 1, therefore, quaternion data need to be corrected with right bias values.
                     // The quaternion data is scaled by 2^30.
                     // Scale to +/- 1
-                    double q1 = ((double)dmpData.Quat6.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q2 = ((double)dmpData.Quat6.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q3 = ((double)dmpData.Quat6.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
-                    quaternion.w = q0;
-                    quaternion.x = q1;
-                    quaternion.y = q2;
-                    quaternion.z = q3;
-                    quaternion *= sensorOffset; //imu rotation
+                    quaternion.x = ((double)dmpData.Quat6.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.y = ((double)dmpData.Quat6.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.z = ((double)dmpData.Quat6.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.w = sqrt(1.0 - ((quaternion.x * quaternion.x) + (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z)));
+                    quaternion *= sensorOffset; // imu rotation
 
-#if ENABLE_INSPECTION
+                    if constexpr (ENABLE_INSPECTION)
                     {
                         Network::sendInspectionFusedIMUData(sensorId, quaternion);
                     }
-#endif
 
                     newData = true;
                     lastData = millis();
                 }
             }
-            else
+#else
             {
-                if((dmpData.header & DMP_header_bitmap_Quat9) > 0)
+                if ((dmpData.header & DMP_header_bitmap_Quat9) > 0)
                 {
                     // Q0 value is computed from this equation: Q0^2 + Q1^2 + Q2^2 + Q3^2 = 1.
                     // In case of drift, the sum will not add to 1, therefore, quaternion data need to be corrected with right bias values.
                     // The quaternion data is scaled by 2^30.
                     // Scale to +/- 1
-                    double q1 = ((double)dmpData.Quat9.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q2 = ((double)dmpData.Quat9.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q3 = ((double)dmpData.Quat9.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
-                    double q0 = sqrt(1.0 - ((q1 * q1) + (q2 * q2) + (q3 * q3)));
-                    quaternion.w = q0;
-                    quaternion.x = q1;
-                    quaternion.y = q2;
-                    quaternion.z = q3;
-                    quaternion *= sensorOffset; //imu rotation
+                    quaternion.x = ((double)dmpData.Quat9.Data.Q1) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.y = ((double)dmpData.Quat9.Data.Q2) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.z = ((double)dmpData.Quat9.Data.Q3) / 1073741824.0; // Convert to double. Divide by 2^30
+                    quaternion.w = sqrt(1.0 - ((quaternion.x * quaternion.x) + (quaternion.y * quaternion.y) + (quaternion.z * quaternion.z)));
+                    quaternion *= sensorOffset; // imu rotation
 
-#if ENABLE_INSPECTION
+                    if constexpr (ENABLE_INSPECTION)
                     {
                         Network::sendInspectionFusedIMUData(sensorId, quaternion);
                     }
-#endif
 
                     newData = true;
                     lastData = millis();
                 }
             }
+#endif
         }
-        else 
+        else
         {
-            if (readStatus == ICM_20948_Stat_FIFONoDataAvail || lastData + 1000 < millis()) 
+            if (readStatus == ICM_20948_Stat_FIFONoDataAvail || lastData + 1000 < millis())
             {
-                dataavaliable = false;
+                dataAvailable = false;
             }
 #ifdef FULL_DEBUG
-            else 
+            else
             {
                 m_Logger.trace("e0x%02x", readStatus);
             }
 #endif
         }
-    }
-    if(lastData + 1000 < millis()) {
+    } while (dataAvailable);
+
+    if (lastData + 1000 < millis())
+    {
         working = false;
-        lastData = millis();  
+        lastData = millis();
         m_Logger.error("Sensor timeout I2C Address 0x%02x", addr);
         Network::sendError(1, this->sensorId);
     }

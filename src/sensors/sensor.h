@@ -48,7 +48,7 @@ public:
 
     virtual ~Sensor(){};
     virtual void motionSetup(){};
-    virtual void motionLoop(){};
+    virtual void readData(){};
     virtual void sendData();
     virtual void startCalibration(int calibrationType){};
     virtual uint8_t getSensorState();

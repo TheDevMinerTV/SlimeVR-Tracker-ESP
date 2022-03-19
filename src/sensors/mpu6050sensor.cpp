@@ -113,7 +113,7 @@ void MPU6050Sensor::motionSetup()
     }
 }
 
-void MPU6050Sensor::motionLoop()
+void MPU6050Sensor::readData()
 {
 #if ENABLE_INSPECTION
     {

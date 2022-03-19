@@ -109,7 +109,8 @@ void BMI160Sensor::motionSetup() {
     working = true;
 }
 
-void BMI160Sensor::motionLoop() {
+void BMI160Sensor::readData()
+{
 #if ENABLE_INSPECTION
     {
         int16_t rX, rY, rZ, aX, aY, aZ;
@@ -121,7 +122,7 @@ void BMI160Sensor::motionLoop() {
 #endif
 
     now = micros();
-    deltat = now - last; //seconds since last update
+    deltat = now - last; // seconds since last update
     last = now;
 
     float Gxyz[3] = {0};

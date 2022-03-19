@@ -43,7 +43,7 @@ void BNO055Sensor::motionSetup() {
     configured = true;
 }
 
-void BNO055Sensor::motionLoop() {
+void BNO055Sensor::readData() {
 #if ENABLE_INSPECTION
     {
         Vector3 gyro = imu.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);

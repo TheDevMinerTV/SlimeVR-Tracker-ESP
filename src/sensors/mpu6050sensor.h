@@ -33,7 +33,7 @@ public:
     MPU6050Sensor(uint8_t id, uint8_t type, uint8_t address, float rotation) : Sensor("MPU6050Sensor", type, id, address, rotation){};
     ~MPU6050Sensor(){};
     void motionSetup() override final;
-    void motionLoop() override final;
+    void readData() override final;
     void startCalibration(int calibrationType) override final;
 
 private:
