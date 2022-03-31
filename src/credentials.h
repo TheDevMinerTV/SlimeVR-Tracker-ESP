@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
+
 #ifndef SLIMEVR_CREDENTIALS_H_
 #define SLIMEVR_CREDENTIALS_H_
 
@@ -30,6 +31,7 @@
 // firmware. We don't have any hardware buttons for the user to confirm
 // OTA update, so this is the best way we have.
 // OTA is allowed only for the first 60 seconds after device startup.
-const char *otaPassword = "SlimeVR-OTA"; // YOUR OTA PASSWORD HERE, LEAVE EMPTY TO DISABLE OTA UPDATES
+const char* otaPassword =
+    "SlimeVR-OTA"; // YOUR OTA PASSWORD HERE, LEAVE EMPTY TO DISABLE OTA UPDATES
 
 #endif // SLIMEVR_CREDENTIALS_H_

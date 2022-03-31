@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -33,58 +33,63 @@
 #define SECOND_IMU_ROTATION DEG_270
 
 // Battery monitoring options (comment to disable):
-//   BAT_EXTERNAL for ADC pin, 
-//   BAT_INTERNAL for internal - can detect only low battery, 
+//   BAT_EXTERNAL for ADC pin,
+//   BAT_INTERNAL for internal - can detect only low battery,
 //   BAT_MCP3021 for external ADC connected over I2C
 #define BATTERY_MONITOR BAT_EXTERNAL
 
 // BAT_EXTERNAL definition
-// D1 Mini boards with ESP8266 have internal resistors. For these boards you only have to adjust BATTERY_SHIELD_RESISTANCE.
-// For other boards you can now adjust the other resistor values.
+// D1 Mini boards with ESP8266 have internal resistors. For these boards you only have to adjust
+// BATTERY_SHIELD_RESISTANCE. For other boards you can now adjust the other resistor values.
 // The diagram looks like this:
-//   (Battery)--- [BATTERY_SHIELD_RESISTANCE] ---(INPUT_BOARD)---  [BATTERY_SHIELD_R2] ---(ESP32_INPUT)--- [BATTERY_SHIELD_R1] --- (GND)
-#define BATTERY_SHIELD_RESISTANCE 180 //130k BatteryShield, 180k SlimeVR or fill in external resistor value in kOhm
-// #define BATTERY_SHIELD_R1 100 // Board voltage divider resistor Ain to GND in kOhm
-// #define BATTERY_SHIELD_R2 220 // Board voltage divider resistor Ain to INPUT_BOARD in kOhm
+//   (BAT)--[BATTERY_SHIELD_RESISTANCE]--(SHIELD)--[R2]--(A0)--[R1]--(GND)
+
+// 130k BatteryShield, 180k SlimeVR or fill in external resistor value in kOhm
+#define BATTERY_SHIELD_RESISTANCE 180
+
+// Board voltage divider resistor Ain to GND in kOhm
+// #define BATTERY_SHIELD_R1 100
+// Board voltage divider resistor Ain to INPUT_BOARD in kOhm
+// #define BATTERY_SHIELD_R2 220
 
 // Board-specific configurations
 #if BOARD == BOARD_SLIMEVR
-  #define PIN_IMU_SDA 14
-  #define PIN_IMU_SCL 12
-  #define PIN_IMU_INT 16
-  #define PIN_IMU_INT_2 13
-  #define PIN_BATTERY_LEVEL 17
+    #define PIN_IMU_SDA 14
+    #define PIN_IMU_SCL 12
+    #define PIN_IMU_INT 16
+    #define PIN_IMU_INT_2 13
+    #define PIN_BATTERY_LEVEL 17
 #elif BOARD == BOARD_SLIMEVR_LEGACY || BOARD == BOARD_SLIMEVR_DEV
-  #define PIN_IMU_SDA 4
-  #define PIN_IMU_SCL 5
-  #define PIN_IMU_INT 10
-  #define PIN_IMU_INT_2 13
-  #define PIN_BATTERY_LEVEL 17
+    #define PIN_IMU_SDA 4
+    #define PIN_IMU_SCL 5
+    #define PIN_IMU_INT 10
+    #define PIN_IMU_INT_2 13
+    #define PIN_BATTERY_LEVEL 17
 #elif BOARD == BOARD_NODEMCU || BOARD == BOARD_WEMOSD1MINI
-  #define PIN_IMU_SDA D2
-  #define PIN_IMU_SCL D1
-  #define PIN_IMU_INT D5
-  #define PIN_IMU_INT_2 D6
-  #define PIN_BATTERY_LEVEL A0
+    #define PIN_IMU_SDA D2
+    #define PIN_IMU_SCL D1
+    #define PIN_IMU_INT D5
+    #define PIN_IMU_INT_2 D6
+    #define PIN_BATTERY_LEVEL A0
 #elif BOARD == BOARD_ESP01
-  #define PIN_IMU_SDA 2
-  #define PIN_IMU_SCL 0
-  #define PIN_IMU_INT 255
-  #define PIN_IMU_INT_2 255
-  #define ENABLE_LEDS false
-  #define PIN_BATTERY_LEVEL 255
+    #define PIN_IMU_SDA 2
+    #define PIN_IMU_SCL 0
+    #define PIN_IMU_INT 255
+    #define PIN_IMU_INT_2 255
+    #define ENABLE_LEDS false
+    #define PIN_BATTERY_LEVEL 255
 #elif BOARD == BOARD_TTGO_TBASE
-  #define PIN_IMU_SDA 5
-  #define PIN_IMU_SCL 4
-  #define PIN_IMU_INT 14
-  #define PIN_IMU_INT_2 13
-  #define PIN_BATTERY_LEVEL A0
+    #define PIN_IMU_SDA 5
+    #define PIN_IMU_SCL 4
+    #define PIN_IMU_INT 14
+    #define PIN_IMU_INT_2 13
+    #define PIN_BATTERY_LEVEL A0
 #elif BOARD == BOARD_CUSTOM
-  // Define pins by the examples above
+// Define pins by the examples above
 #elif BOARD == BOARD_WROOM32
-  #define PIN_IMU_SDA 21
-  #define PIN_IMU_SCL 22
-  #define PIN_IMU_INT 23
-  #define PIN_IMU_INT_2 25
-  #define PIN_BATTERY_LEVEL 36
+    #define PIN_IMU_SDA 21
+    #define PIN_IMU_SCL 22
+    #define PIN_IMU_INT 23
+    #define PIN_IMU_INT_2 25
+    #define PIN_BATTERY_LEVEL 36
 #endif

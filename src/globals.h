@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,32 +20,34 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
+
 #ifndef SLIMEVR_GLOBALS_H_
 #define SLIMEVR_GLOBALS_H_
 
 #include <Arduino.h>
+
 #include "consts.h"
 #include "debug.h"
 #include "defines.h"
 
 #ifndef SECOND_IMU
-#define SECOND_IMU IMU
+    #define SECOND_IMU IMU
 #endif
 
 #ifndef SECOND_IMU_ROTATION
-#define SECOND_IMU_ROTATION IMU_ROTATION
+    #define SECOND_IMU_ROTATION IMU_ROTATION
 #endif
 
 #ifndef BATTERY_MONITOR
-#define BATTERY_MONITOR BAT_INTERNAL
+    #define BATTERY_MONITOR BAT_INTERNAL
 #endif
 
 #if defined(LED_INVERTED) && LED_INVERTED
-#define LED_ON LOW
-#define LED_OFF HIGH
+    #define LED_ON LOW
+    #define LED_OFF HIGH
 #else
-#define LED_ON HIGH
-#define LED_OFF LOW
+    #define LED_ON HIGH
+    #define LED_OFF LOW
 #endif
 
 #endif // SLIMEVR_GLOBALS_H_

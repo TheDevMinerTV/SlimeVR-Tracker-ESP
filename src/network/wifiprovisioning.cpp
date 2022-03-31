@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,9 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
-#include "network.h"
+
 #include "logging/Logger.h"
+#include "network.h"
 
 // TODO Currently provisioning implemented via SmartConfig
 // it sucks.
@@ -36,7 +37,7 @@ void WiFiNetwork::upkeepProvisioning() {
 }
 
 void WiFiNetwork::startProvisioning() {
-    if(WiFi.beginSmartConfig()) {
+    if (WiFi.beginSmartConfig()) {
         provisioning = true;
         wifiProvisioningLogger.info("SmartConfig started");
     }

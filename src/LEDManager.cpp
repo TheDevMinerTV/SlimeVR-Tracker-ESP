@@ -22,13 +22,12 @@
 */
 
 #include "LEDManager.h"
+
 #include "GlobalVars.h"
 #include "status/Status.h"
 
-namespace SlimeVR
-{
-    void LEDManager::setup()
-    {
+namespace SlimeVR {
+    void LEDManager::setup() {
 #if ENABLE_LEDS
         pinMode(m_Pin, OUTPUT);
 #endif
@@ -37,44 +36,37 @@ namespace SlimeVR
         update();
     }
 
-    void LEDManager::on()
-    {
+    void LEDManager::on() {
 #if ENABLE_LEDS
         digitalWrite(m_Pin, LED_ON);
 #endif
     }
 
-    void LEDManager::off()
-    {
+    void LEDManager::off() {
 #if ENABLE_LEDS
         digitalWrite(m_Pin, LED_OFF);
 #endif
     }
 
-    void LEDManager::blink(unsigned long time)
-    {
+    void LEDManager::blink(unsigned long time) {
         on();
         delay(time);
         off();
     }
 
-    void LEDManager::pattern(unsigned long timeon, unsigned long timeoff, int times)
-    {
-        for (int i = 0; i < times; i++)
-        {
+    void LEDManager::pattern(unsigned long timeon, unsigned long timeoff, int times) {
+        for (int i = 0; i < times; i++) {
             blink(timeon);
             delay(timeoff);
         }
     }
 
-    void LEDManager::update()
-    {
+    void LEDManager::update() {
         unsigned long time = millis();
         unsigned long diff = time - m_LastUpdate;
 
         // Don't tick the LEDManager *too* often
-        if (diff < 10)
-        {
+        if (diff < 10) {
             return;
         }
 
@@ -83,11 +75,10 @@ namespace SlimeVR
         unsigned int length = 0;
         unsigned int count = 0;
 
-        if (statusManager.hasStatus(Status::LOW_BATTERY))
-        {
+        if (statusManager.hasStatus(Status::LOW_BATTERY)) {
             count = LOW_BATTERY_COUNT;
-            switch (m_CurrentStage)
-            {
+
+            switch (m_CurrentStage) {
             case ON:
             case OFF:
                 length = LOW_BATTERY_LENGTH;
@@ -99,12 +90,10 @@ namespace SlimeVR
                 length = LOW_BATTERY_INTERVAL;
                 break;
             }
-        }
-        else if (statusManager.hasStatus(Status::IMU_ERROR))
-        {
+        } else if (statusManager.hasStatus(Status::IMU_ERROR)) {
             count = IMU_ERROR_COUNT;
-            switch (m_CurrentStage)
-            {
+
+            switch (m_CurrentStage) {
             case ON:
             case OFF:
                 length = IMU_ERROR_LENGTH;
@@ -116,12 +105,10 @@ namespace SlimeVR
                 length = IMU_ERROR_INTERVAL;
                 break;
             }
-        }
-        else if (statusManager.hasStatus(Status::WIFI_CONNECTING))
-        {
+        } else if (statusManager.hasStatus(Status::WIFI_CONNECTING)) {
             count = WIFI_CONNECTING_COUNT;
-            switch (m_CurrentStage)
-            {
+
+            switch (m_CurrentStage) {
             case ON:
             case OFF:
                 length = WIFI_CONNECTING_LENGTH;
@@ -133,12 +120,10 @@ namespace SlimeVR
                 length = WIFI_CONNECTING_INTERVAL;
                 break;
             }
-        }
-        else if (statusManager.hasStatus(Status::SERVER_CONNECTING))
-        {
+        } else if (statusManager.hasStatus(Status::SERVER_CONNECTING)) {
             count = SERVER_CONNECTING_COUNT;
-            switch (m_CurrentStage)
-            {
+
+            switch (m_CurrentStage) {
             case ON:
             case OFF:
                 length = SERVER_CONNECTING_LENGTH;
@@ -150,13 +135,11 @@ namespace SlimeVR
                 length = SERVER_CONNECTING_INTERVAL;
                 break;
             }
-        }
-        else
-        {
+        } else {
 #if defined(LED_INTERVAL_STANDBY) && LED_INTERVAL_STANDBY > 0
             count = 1;
-            switch (m_CurrentStage)
-            {
+
+            switch (m_CurrentStage) {
             case ON:
             case OFF:
                 length = STANDBUY_LENGTH;
@@ -173,12 +156,11 @@ namespace SlimeVR
 #endif
         }
 
-        if (m_CurrentStage == OFF || m_Timer + diff >= length)
-        {
+        if (m_CurrentStage == OFF || m_Timer + diff >= length) {
             m_Timer = 0;
+
             // Advance stage
-            switch (m_CurrentStage)
-            {
+            switch (m_CurrentStage) {
             case OFF:
                 on();
                 m_CurrentStage = ON;
@@ -187,13 +169,11 @@ namespace SlimeVR
             case ON:
                 off();
                 m_CurrentCount++;
-                if (m_CurrentCount >= count)
-                {
+
+                if (m_CurrentCount >= count) {
                     m_CurrentCount = 0;
                     m_CurrentStage = INTERVAL;
-                }
-                else
-                {
+                } else {
                     m_CurrentStage = GAP;
                 }
                 break;
@@ -202,14 +182,9 @@ namespace SlimeVR
                 on();
                 m_CurrentStage = ON;
                 break;
-                on();
-                m_CurrentStage = ON;
-                break;
             }
-        }
-        else
-        {
+        } else {
             m_Timer += diff;
         }
     }
-}
+} // namespace SlimeVR

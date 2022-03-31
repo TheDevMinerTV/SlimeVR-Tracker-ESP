@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -88,10 +88,11 @@ namespace Network {
     void sendError(uint8_t reason, uint8_t sensorId);
 
     // PACKET_SENSOR_INFO 15
-    void sendSensorInfo(Sensor * sensor);
+    void sendSensorInfo(Sensor* sensor);
 
     // PACKET_ROTATION_DATA 17
-    void sendRotationData(Quat * const quaternion, uint8_t dataType, uint8_t accuracyInfo, uint8_t sensorId);
+    void sendRotationData(Quat* const quaternion, uint8_t dataType, uint8_t accuracyInfo,
+                          uint8_t sensorId);
 
     // PACKET_MAGNETOMETER_ACCURACY 18
     void sendMagnetometerAccuracy(float accuracyInfo, uint8_t sensorId);
@@ -103,14 +104,18 @@ namespace Network {
     void sendTemperature(float temperature, uint8_t sensorId);
 
 #if ENABLE_INSPECTION
-    void sendInspectionRawIMUData(uint8_t sensorId, int16_t rX, int16_t rY, int16_t rZ, uint8_t rA, int16_t aX, int16_t aY, int16_t aZ, uint8_t aA, int16_t mX, int16_t mY, int16_t mZ, uint8_t mA);
-    void sendInspectionRawIMUData(uint8_t sensorId, float rX, float rY, float rZ, uint8_t rA, float aX, float aY, float aZ, uint8_t aA, float mX, float mY, float mZ, uint8_t mA);
+    void sendInspectionRawIMUData(uint8_t sensorId, int16_t rX, int16_t rY, int16_t rZ, uint8_t rA,
+                                  int16_t aX, int16_t aY, int16_t aZ, uint8_t aA, int16_t mX,
+                                  int16_t mY, int16_t mZ, uint8_t mA);
+    void sendInspectionRawIMUData(uint8_t sensorId, float rX, float rY, float rZ, uint8_t rA,
+                                  float aX, float aY, float aZ, uint8_t aA, float mX, float mY,
+                                  float mZ, uint8_t mA);
 
     void sendInspectionFusedIMUData(uint8_t sensorId, Quat quaternion);
 
     void sendInspectionCorrectionData(uint8_t sensorId, Quat quaternion);
 #endif
-}
+} // namespace Network
 
 namespace DataTransfer {
     bool beginPacket();
@@ -122,11 +127,11 @@ namespace DataTransfer {
     void sendByte(uint8_t c);
     void sendInt(int i);
     void sendLong(uint64_t l);
-    void sendBytes(const uint8_t * c, size_t length);
-    void sendShortString(const char * str);
-    void sendLongString(const char * str);
+    void sendBytes(const uint8_t* c, size_t length);
+    void sendShortString(const char* str);
+    void sendLongString(const char* str);
 
     int getWriteError();
-}
+} // namespace DataTransfer
 
 #endif // SLIMEVR_PACKETS_H_

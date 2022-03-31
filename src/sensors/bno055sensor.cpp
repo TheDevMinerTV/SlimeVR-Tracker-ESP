@@ -21,15 +21,16 @@
     THE SOFTWARE.
 */
 #include "bno055sensor.h"
-#include "network/network.h"
-#include "globals.h"
+
 #include "GlobalVars.h"
+#include "globals.h"
+#include "network/network.h"
 
 void BNO055Sensor::motionSetup() {
     imu = Adafruit_BNO055(sensorId, addr);
     delay(3000);
-    if (!imu.begin(Adafruit_BNO055::OPERATION_MODE_IMUPLUS))
-    {
+
+    if (!imu.begin(Adafruit_BNO055::OPERATION_MODE_IMUPLUS)) {
         m_Logger.fatal("Can't connect to BNO055 at address 0x%02x", addr);
         ledManager.pattern(50, 50, 200);
         return;
@@ -45,13 +46,13 @@ void BNO055Sensor::motionSetup() {
 
 void BNO055Sensor::motionLoop() {
 #if ENABLE_INSPECTION
-    {
-        Vector3 gyro = imu.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-        Vector3 accel = imu.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
-        Vector3 mag = imu.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
+    Vector3 gyro = imu.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    Vector3 accel = imu.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+    Vector3 mag = imu.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
 
-        Network::sendInspectionRawIMUData(sensorId, UNPACK_VECTOR(gyro), 255, UNPACK_VECTOR(accel), 255, UNPACK_VECTOR(mag), 255);
-    }
+    Network::sendInspectionRawIMUData(sensorId, UNPACK_VECTOR(gyro), 255, UNPACK_VECTOR(accel), 255,
+                                      UNPACK_VECTOR(mag), 255);
+
 #endif
 
     // TODO Optimize a bit with setting rawQuat directly
@@ -60,17 +61,13 @@ void BNO055Sensor::motionLoop() {
     quaternion *= sensorOffset;
 
 #if ENABLE_INSPECTION
-    {
-        Network::sendInspectionFusedIMUData(sensorId, quaternion);
-    }
+    Network::sendInspectionFusedIMUData(sensorId, quaternion);
 #endif
 
-    if(!OPTIMIZE_UPDATES || !lastQuatSent.equalsWithEpsilon(quaternion)) {
+    if (!OPTIMIZE_UPDATES || !lastQuatSent.equalsWithEpsilon(quaternion)) {
         newData = true;
         lastQuatSent = quaternion;
     }
 }
 
-void BNO055Sensor::startCalibration(int calibrationType) {
-
-}
+void BNO055Sensor::startCalibration(int calibrationType) {}

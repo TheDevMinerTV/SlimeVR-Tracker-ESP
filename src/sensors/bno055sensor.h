@@ -24,14 +24,14 @@
 #ifndef SENSORS_BNO055SENSOR_H
 #define SENSORS_BNO055SENSOR_H
 
-#include "sensor.h"
-
 #include <Adafruit_BNO055.h>
 
-class BNO055Sensor : public Sensor
-{
+#include "sensor.h"
+
+class BNO055Sensor : public Sensor {
 public:
-    BNO055Sensor(uint8_t id, uint8_t address, float rotation) : Sensor("BNO055Sensor", IMU_BNO055, id, address, rotation){};
+    BNO055Sensor(uint8_t id, uint8_t address, float rotation) :
+        Sensor("BNO055Sensor", IMU_BNO055, id, address, rotation){};
     ~BNO055Sensor(){};
     void motionSetup() override final;
     void motionLoop() override final;

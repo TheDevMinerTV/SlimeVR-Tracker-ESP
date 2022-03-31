@@ -20,10 +20,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
+
 #ifndef SLIMEVR_LEDMANAGER_H
 #define SLIMEVR_LEDMANAGER_H
 
 #include <Arduino.h>
+
 #include "globals.h"
 #include "logging/Logger.h"
 
@@ -45,8 +47,7 @@
 #define SERVER_CONNECTING_INTERVAL 3000
 #define SERVER_CONNECTING_COUNT 2
 
-namespace SlimeVR
-{
+namespace SlimeVR {
     enum LEDStage
     {
         OFF,
@@ -55,8 +56,7 @@ namespace SlimeVR
         INTERVAL
     };
 
-    class LEDManager
-    {
+    class LEDManager {
     public:
         LEDManager(uint8_t pin) : m_Pin(pin) {}
 
@@ -98,6 +98,6 @@ namespace SlimeVR
 
         Logging::Logger m_Logger = Logging::Logger("LEDManager");
     };
-}
+} // namespace SlimeVR
 
 #endif

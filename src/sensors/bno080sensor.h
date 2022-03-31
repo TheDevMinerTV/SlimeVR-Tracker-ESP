@@ -24,14 +24,15 @@
 #ifndef SENSORS_BNO080SENSOR_H
 #define SENSORS_BNO080SENSOR_H
 
-#include "sensor.h"
 #include <BNO080.h>
 
-class BNO080Sensor : public Sensor
-{
+#include "sensor.h"
+
+class BNO080Sensor : public Sensor {
 public:
-    BNO080Sensor(uint8_t id, uint8_t type, uint8_t address, float rotation, uint8_t intPin)
-        : Sensor("BNO080Sensor", type, id, address, rotation), m_IntPin(intPin) {};
+    BNO080Sensor(uint8_t id, uint8_t type, uint8_t address, float rotation, uint8_t intPin) :
+        Sensor("BNO080Sensor", type, id, address, rotation),
+        m_IntPin(intPin){};
     ~BNO080Sensor(){};
     void motionSetup() override final;
     void motionLoop() override final;

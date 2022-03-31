@@ -24,22 +24,20 @@
 #ifndef SLIMEVR_SENSORMANAGER
 #define SLIMEVR_SENSORMANAGER
 
-#include "globals.h"
-#include "sensor.h"
 #include "EmptySensor.h"
+#include "globals.h"
 #include "logging/Logger.h"
+#include "sensor.h"
 
-namespace SlimeVR
-{
-    namespace Sensors
-    {
-        class SensorManager
-        {
+namespace SlimeVR {
+    namespace Sensors {
+        class SensorManager {
         public:
-            SensorManager()
-                : m_Logger(SlimeVR::Logging::Logger("SensorManager")), m_Sensor1(new EmptySensor(0)), m_Sensor2(new EmptySensor(0)) {}
-            ~SensorManager()
-            {
+            SensorManager() :
+                m_Logger(SlimeVR::Logging::Logger("SensorManager")),
+                m_Sensor1(new EmptySensor(0)),
+                m_Sensor2(new EmptySensor(0)) {}
+            ~SensorManager() {
                 delete m_Sensor1;
                 delete m_Sensor2;
             }
@@ -47,16 +45,21 @@ namespace SlimeVR
             void setup();
             void update();
 
-            Sensor *getFirst() { return m_Sensor1; };
-            Sensor *getSecond() { return m_Sensor2; };
+            Sensor* getFirst() {
+                return m_Sensor1;
+            };
+
+            Sensor* getSecond() {
+                return m_Sensor2;
+            };
 
         private:
             SlimeVR::Logging::Logger m_Logger;
 
-            Sensor *m_Sensor1;
-            Sensor *m_Sensor2;
+            Sensor* m_Sensor1;
+            Sensor* m_Sensor2;
         };
-    }
-}
+    } // namespace Sensors
+} // namespace SlimeVR
 
 #endif // SLIMEVR_SENSORFACTORY_H_

@@ -1,6 +1,6 @@
 /*
     SlimeVR Code is placed under the MIT license
-    Copyright (c) 2021 Eiren Rain
+    Copyright (c) 2021 Eiren Rain & SlimeVR contributors
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 */
+
 #ifndef SLIMEVR_DEBUG_H_
 #define SLIMEVR_DEBUG_H_
+
 #include "consts.h"
 #include "logging/Level.h"
 
@@ -31,15 +33,18 @@
 #define LOAD_BIAS 1 // Loads the bias values from NVS on start (ESP32 Only)
 #define SAVE_BIAS 1 // Periodically saves bias calibration data to NVS (ESP32 Only)
 #define BIAS_DEBUG false // Printing BIAS Variables to serial (ICM20948 only)
-#define ENABLE_TAP false // monitor accel for (triple) tap events and send them. Uses more cpu, disable if problems. Server does nothing with value so disabled atm
 
-//Debug information
+// Monitor accel for (triple) tap events and send them. Uses more CPU, disable if you have problems.
+// Server does nothing with value so it's disabled at the moment.
+#define ENABLE_TAP false
+
+// Debug information
 
 #define LOG_LEVEL LOG_LEVEL_DEBUG
 
 #if LOG_LEVEL == LOG_LEVEL_TRACE
-#define DEBUG_SENSOR
-#define DEBUG_NETWORK
+    #define DEBUG_SENSOR
+    #define DEBUG_NETWORK
 #endif
 
 #define serialDebug false // Set to true to get Serial output for debugging
@@ -54,7 +59,7 @@
 #define samplingRateInMillis 10
 
 // Sleeping options
-#define POWERSAVING_MODE POWER_SAVING_LEGACY  // Minimum causes sporadic data pauses
+#define POWERSAVING_MODE POWER_SAVING_LEGACY // Minimum causes sporadic data pauses
 #if POWERSAVING_MODE >= POWER_SAVING_MINIMUM
     #define TARGET_LOOPTIME_MICROS (samplingRateInMillis * 1000)
 #endif
