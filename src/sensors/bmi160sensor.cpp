@@ -155,16 +155,6 @@ float BMI160Sensor::getTemperature()
 
 void BMI160Sensor::getScaledValues(float Gxyz[3], float Axyz[3])
 {
-#if ENABLE_INSPECTION
-    {
-        int16_t rX, rY, rZ, aX, aY, aZ, mX, mY, mZ;
-        imu.getRotation(&rX, &rY, &rZ);
-        imu.getAcceleration(&aX, &aY, &aZ);
-
-        Network::sendInspectionRawIMUData(sensorId, rX, rY, rZ, 255, aX, aY, aZ, 255, 0, 0, 0, 255);
-    }
-#endif
-
     float temperature = getTemperature();
     float tempDiff = temperature - m_Calibration.temperature;
     uint8_t quant = map(temperature, 15, 75, 0, 12);
