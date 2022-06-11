@@ -63,13 +63,13 @@ namespace SlimeVR {
 
         struct ICM20948CalibrationConfig {
             // gyroscope bias
-            int32_t G[3];
+            int G[3];
 
             // accelerometer bias
-            int32_t A[3];
+            int A[3];
 
             // compass bias
-            int32_t C[3];
+            int C[3];
         };
 
         enum CalibrationConfigType { NONE, BMI160, MPU6050, MPU9250, ICM20948 };
