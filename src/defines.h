@@ -48,20 +48,11 @@
 // #define BATTERY_SHIELD_R1 100 // Board voltage divider resistor Ain to GND in kOhm
 // #define BATTERY_SHIELD_R2 220 // Board voltage divider resistor Ain to INPUT_BOARD in kOhm
 
-//Only works in esp8266
-#if BOARD == BOARD_WEMOSD1MINI
-#define MAX_ODR true // (True) enables Fastest Output Rate (False) caps it to 100Hz (ICM20948 only)
-#else
-#define MAX_ODR false // Unsupported Board, leave as false
-#endif
-
-//Only works in esp8266
-#if BOARD == BOARD_WEMOSD1MINI
-#define MAX_ODR false // (True) enables Fastest Output Rate (False) caps it to 100Hz (ICM20948 only)
-#else
-#define MAX_ODR false // Unsupported Board, leave as false
-#endif
-
+// ICM20948 Refreshing Value 
+// default values if not defined:
+//  Value on ESP32 1.25 
+//  Value on ESP8266 0.5 
+// #define ODRVALUE 1.25
 
 // LED configuration:
 // Configuration Priority 1 = Highest:
